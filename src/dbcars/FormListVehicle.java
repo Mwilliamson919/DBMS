@@ -246,6 +246,7 @@ public class FormListVehicle extends javax.swing.JInternalFrame {
             txtDrivetrain.setText(null);
             txtType.setText(null);
             txtFinalPrice.setText(null);
+            JOptionPane.showMessageDialog(this, "Vehicle Added.");
         }
     }//GEN-LAST:event_btnAddActionPerformed
 

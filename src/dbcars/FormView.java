@@ -5,6 +5,7 @@
 package dbcars;
 
 import businessObjects.Vehicle;
+import dao.MakerHandler;
 import dao.VehicleHandler;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -21,17 +22,19 @@ public class FormView extends javax.swing.JInternalFrame {
      * Creates new form FormView
      */
     private VehicleHandler vehicleHandler = new VehicleHandler();
+    
+    
     private void populateVehicles(){
         String keyword = "";
         if (txtSearch.getText().equals("")){
-            keyword = "1";
+            keyword = "Honda";
         }else {
             keyword = txtSearch.getText();
         }
         System.out.println(keyword);
         //keyword = "1";
         List<Vehicle> vehicles = vehicleHandler.loadVehicles(keyword);
-        String columns[] = new String[]{"autoID", "makerID", "model", "trim", "year", "color", "mpg", "msrp", "capacity", "drivetrain", "type", "Final Price"};
+        String columns[] = new String[]{"autoID", "makerName", "model", "trim", "year", "color", "mpg", "msrp", "capacity", "drivetrain", "type", "Final Price"};
         DefaultTableModel tblModel = new DefaultTableModel(columns, 0);
         vehicles.forEach((vehicle)->{
             tblModel.addRow(vehicle.getRow());
@@ -60,6 +63,7 @@ public class FormView extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblVehicles = new javax.swing.JTable();
         btnDelete = new javax.swing.JButton();
+        btnUpdate = new javax.swing.JButton();
 
         setClosable(true);
         setIconifiable(true);
@@ -95,22 +99,35 @@ public class FormView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnUpdate.setText("Update");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(53, 500, Short.MAX_VALUE)
+                .addComponent(btnDelete)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnUpdate)
+                .addGap(65, 65, 65))
             .addGroup(layout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnDelete)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnSearch)))
-                .addContainerGap(72, Short.MAX_VALUE))
+                .addGap(334, 334, 334)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnSearch)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -123,7 +140,9 @@ public class FormView extends javax.swing.JInternalFrame {
                 .addGap(56, 56, 56)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnDelete)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnDelete)
+                    .addComponent(btnUpdate))
                 .addContainerGap(27, Short.MAX_VALUE))
         );
 
@@ -149,10 +168,44 @@ public class FormView extends javax.swing.JInternalFrame {
         
     }//GEN-LAST:event_btnDeleteActionPerformed
 
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        int selectedRow = tblVehicles.getSelectedRow();
+        if (selectedRow != -1 && GlobalData.usr.getUserRole().equals("Seller")){
+            int autoID = (int) tblVehicles.getValueAt(selectedRow,0);
+            int ret = JOptionPane.showConfirmDialog(this, String.format("Update vehicle %d?", autoID));
+            if (ret == JOptionPane.OK_OPTION){
+                int makerId = new MakerHandler().getMakerIdFromName((String)tblVehicles.getValueAt(selectedRow,1));
+                String model = (String)tblVehicles.getValueAt(selectedRow,2);
+                String trim = (String)tblVehicles.getValueAt(selectedRow,3);
+                int year = (int) tblVehicles.getValueAt(selectedRow, 4);
+                String color = (String)tblVehicles.getValueAt(selectedRow,5);
+                int mpg = (int) tblVehicles.getValueAt(selectedRow, 6);
+                double msrp = (double) tblVehicles.getValueAt(selectedRow, 7);
+                int capacity = (int) tblVehicles.getValueAt(selectedRow, 8);
+                String drivetrain = (String)tblVehicles.getValueAt(selectedRow,9);
+                String type = (String)tblVehicles.getValueAt(selectedRow,10);
+                double fPrice = (double) tblVehicles.getValueAt(selectedRow, 11);
+                String sYear = Integer.toString(year);
+                String sMpg = Integer.toString(mpg);
+                String sMsrp = Double.toString(msrp);
+                String sCapacity = Integer.toString(capacity);
+                String sFPrice = Double.toString(fPrice);
+                FormUpdate formUpdate = new FormUpdate();
+                formUpdate.populateFields(autoID, makerId, model, trim, sYear, color, sMpg, sMsrp, sCapacity, drivetrain, type, sFPrice);
+                formUpdate.setVisible(true);
+            }
+        }else {
+            JOptionPane.showMessageDialog(this, "Either no row selected or insufficient permission");
+        }
+        System.out.println("update pressed");
+        
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnSearch;
+    private javax.swing.JButton btnUpdate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblVehicles;

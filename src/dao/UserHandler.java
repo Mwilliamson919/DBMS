@@ -15,13 +15,13 @@ import java.util.logging.Logger;
  *
  * @author mwill
  */
-public class SellerHandler {
+public class UserHandler {
     private SQLUtil sqlUtil;
 
     /**
      *
      */
-    public SellerHandler() {
+    public UserHandler() {
         sqlUtil = new SQLUtil();
     }
 
@@ -31,6 +31,13 @@ public class SellerHandler {
      * @param password
      * @return
      */
+    
+    public int addUser(String username, String password, String phoneNum, String email, String address, String role){
+        int phone = Integer.parseInt(phoneNum);
+        String cmd = String.format("insert into users (userName, user_phone, email_address, address, userRole, userPassword) values('%s', '%d', '%s', '%s', '%s', '%s');", username, phone, email, address, role, password);
+        return sqlUtil.executeUpdate(cmd);
+    }   
+    
     public User login(String username, String password){
         User usr = null;
         try {
@@ -43,7 +50,7 @@ public class SellerHandler {
                 usr = new User(usrId, usrRole);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(SellerHandler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         return usr;
     }

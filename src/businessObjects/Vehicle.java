@@ -4,7 +4,10 @@
  */
 package businessObjects;
 
+import dao.MakerHandler;
+import java.util.List;
 import java.util.Vector;
+import utils.Utils;
 
 /**
  *
@@ -13,6 +16,7 @@ import java.util.Vector;
 public class Vehicle {
     private int autoID;
     private int makerID;
+    private String makerName;
     private int year;
     private int mpg;
     private double msrp;
@@ -44,7 +48,8 @@ public class Vehicle {
     public Vector getRow(){
         Vector vector = new Vector();
         vector.add(this.autoID);
-        vector.add(this.makerID);
+        this.makerName = new MakerHandler().getMakerNameFromId(makerID);
+        vector.add(this.makerName);
         vector.add(this.model);
         vector.add(this.trim);
         vector.add(this.year);

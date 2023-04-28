@@ -4,6 +4,7 @@
  */
 package dao;
 
+import businessObjects.Automaker;
 import businessObjects.Vehicle;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import utils.SQLUtil;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 /**
  *
@@ -20,6 +22,12 @@ public class VehicleHandler {
     private SQLUtil sqlUtil;
     public VehicleHandler() {
         sqlUtil = new SQLUtil();
+    }
+    
+    public int updateVehicle(int autoID, int makerID, String model, String trim, int year, String color, int mpg, double msrp, int capacity, String drivetrain, String type, double fPrice){
+        String cmdTemplate = "update vehicle set makerId = '%d', model = '%s', trim = '%s', year = '%d', color = '%s', mpg = '%d', msrp = '%f', seat_capacity = '%d', drivetrain = '%s', type = '%s', price = '%f' where autoId = '%d';";
+        String cmd = String.format(cmdTemplate, makerID, model, trim, year, color, mpg, msrp, capacity, drivetrain, type, fPrice, autoID);
+        return sqlUtil.executeUpdate(cmd);
     }
     public int deleteVehicle(int autoID){
         String cmdTemplate = "delete from vehicle where autoID = %d";
@@ -41,20 +49,14 @@ public class VehicleHandler {
         List<Vehicle> vehicles = new ArrayList<>();
         int key = 0;
         String cmd;
-        cmd = String.format("select autoID, makerID, model, trim, year, color, mpg, msrp, seat_capacity, drivetrain, type, price from vehicle");
-
-        if (keyword.equals("Toyota")){
-            key = 1;
-            cmd = String.format("select autoID, makerID, model, trim, year, color, mpg, msrp, seat_capacity, drivetrain, type, price from vehicle where makerID = '%d'", key);
-        }else if (keyword.equals("Ford")){
-            key = 2;
-            cmd = String.format("select autoID, makerID, model, trim, year, color, mpg, msrp, seat_capacity, drivetrain, type, price from vehicle where makerID = '%d'", key);
-        }else if (keyword.equals("Honda")){
-            key = 3;
-            
-        } else if (keyword.equals("Jeep")){
-            key = 4;
-            cmd = String.format("select autoID, makerID, model, trim, year, color, mpg, msrp, seat_capacity, drivetrain, type, price from vehicle where makerID = '%d'", key);
+        cmd = String.format("select autoID, makerID, model, trim, year, color, mpg, msrp, seat_capacity, drivetrain, type, price from vehicle;"); 
+        List<Automaker> makers = new MakerHandler().getMakers();
+        key = new MakerHandler().getIndexOfMaker(makers, keyword);
+        if (key == -1){
+            cmd = "select autoID, makerID, model, trim, year, color, mpg, msrp, seat_capacity, drivetrain, type, price from vehicle;";
+        }else {
+            key += 1;
+            cmd = String.format("select autoID, makerID, model, trim, year, color, mpg, msrp, seat_capacity, drivetrain, type, price from vehicle where makerID = '%d';", key);
         }
         ResultSet rs = sqlUtil.executeQuery(cmd);
         try {

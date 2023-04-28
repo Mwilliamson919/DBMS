@@ -5,7 +5,6 @@
 package dao;
 
 import businessObjects.Automaker;
-import businessObjects.Vehicle;
 import java.util.ArrayList;
 import java.util.List;
 import utils.SQLUtil;
@@ -41,4 +40,36 @@ public class MakerHandler {
         }
         return results;
     }
+    
+    public String getMakerNameFromId(int makerId){
+        List<Automaker> makers = getMakers();
+        for(Automaker maker : makers) {
+            if(makerId == maker.getMakerId()){
+                return maker.getMakerName();
+            }
+        }
+        return null;
+    }
+    
+    public int getMakerIdFromName(String name){
+        List<Automaker> makers = getMakers();
+        for(Automaker maker : makers) {
+            if(name.equalsIgnoreCase(maker.getMakerName())){
+                return maker.getMakerId();
+            }
+        }
+        return -1;
+    }
+    
+    public static int getIndexOfMaker(List<Automaker> makers, String name) {
+        int pos = 0;
+        for(Automaker maker : makers) {
+            if(name.equalsIgnoreCase(maker.getMakerName())){
+                return pos;
+            }
+            pos++;
+        }
+    return -1;
+    }
+    
 }

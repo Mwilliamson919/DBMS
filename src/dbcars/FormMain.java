@@ -26,8 +26,7 @@ public class FormMain extends javax.swing.JFrame {
     FormLogin formLogin = new FormLogin();
     FormListVehicle formListVehicle = new FormListVehicle();
     FormView formView = new FormView();
-    FormUpdateVehicle formUpdateVehicle = new FormUpdateVehicle();
-    FormDeleteVehicle formDeleteVehicle = new FormDeleteVehicle();
+    FormCreateAccount formCreateAccount = new FormCreateAccount();
     
     Map<String, JInternalFrame> forms = new HashMap<>();
     
@@ -36,8 +35,7 @@ public class FormMain extends javax.swing.JFrame {
         forms.put("formLogin", formLogin);
         forms.put("formListVehicle", formListVehicle);
         forms.put("formView", formView);
-        forms.put("formUpdateVehicle", formUpdateVehicle);
-        forms.put("formDeleteVehicle", formDeleteVehicle);
+        forms.put("formCreateAccount", formCreateAccount);
         //add to j desktop pane
         forms.values().forEach((frm)->{
             jdpContainer.add(frm);
@@ -45,6 +43,10 @@ public class FormMain extends javax.swing.JFrame {
         
          
     }
+    private void showFormNoLogin(String formName){
+        showForm(formName, false);
+    }
+    
     private void showForm(String formName){
         showForm(formName, true);
     }
@@ -87,11 +89,10 @@ public class FormMain extends javax.swing.JFrame {
         menuLogin = new javax.swing.JMenuItem();
         menuLogout = new javax.swing.JMenuItem();
         menuExit = new javax.swing.JMenuItem();
+        minCreateAccount = new javax.swing.JMenuItem();
         menuManage = new javax.swing.JMenu();
         jMenu1 = new javax.swing.JMenu();
         updateSeller = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
         menuView = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -120,16 +121,29 @@ public class FormMain extends javax.swing.JFrame {
         menuFile.add(menuLogin);
 
         menuLogout.setText("Logout");
+        menuLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuLogoutActionPerformed(evt);
+            }
+        });
         menuFile.add(menuLogout);
 
         menuExit.setText("Exit");
         menuFile.add(menuExit);
 
+        minCreateAccount.setText("Create Account");
+        minCreateAccount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minCreateAccountActionPerformed(evt);
+            }
+        });
+        menuFile.add(minCreateAccount);
+
         jMenuBar1.add(menuFile);
 
         menuManage.setText("Manage");
 
-        jMenu1.setText("Seller");
+        jMenu1.setText("Vehicles");
 
         updateSeller.setText("List Vehicle");
         updateSeller.addActionListener(new java.awt.event.ActionListener() {
@@ -138,22 +152,6 @@ public class FormMain extends javax.swing.JFrame {
             }
         });
         jMenu1.add(updateSeller);
-
-        jMenuItem3.setText("Update Vehicle");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem3);
-
-        jMenuItem4.setText("Delete");
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem4ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem4);
 
         menuView.setText("View");
         menuView.addActionListener(new java.awt.event.ActionListener() {
@@ -173,36 +171,42 @@ public class FormMain extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void menuLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLoginActionPerformed
-        showForm("formLogin", false);
+        if (GlobalData.usr == null){
+            showFormNoLogin("formLogin");
+        }else {
+            JOptionPane.showMessageDialog(this, "Already logged in.");
+        }
     }//GEN-LAST:event_menuLoginActionPerformed
 
     private void updateSellerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateSellerActionPerformed
-        if (GlobalData.usr.getUserRole().equals("Seller")){
+        if (GlobalData.usr != null){
+            if (GlobalData.usr.getUserRole().equals("Seller")){
             showForm("formListVehicle");
-        }else {
+            }else {
             JOptionPane.showMessageDialog(this, "Insufficient permissions");
+            }
+        } else {
+            showForm("formLogin", false);
         }
     }//GEN-LAST:event_updateSellerActionPerformed
-
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        if (GlobalData.usr.getUserRole().equals("Seller")){
-            showForm("formUpdateVehicle");
-        }else {
-            JOptionPane.showMessageDialog(this, "Insufficient permissions");
-        }
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
-
-    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        if (GlobalData.usr.getUserRole().equals("Seller")){
-            showForm("formDeleteVehicle");
-        }else {
-            JOptionPane.showMessageDialog(this, "Insufficient permissions");
-        }
-    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void menuViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuViewActionPerformed
         showForm("formView");
     }//GEN-LAST:event_menuViewActionPerformed
+
+    private void minCreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minCreateAccountActionPerformed
+        if (GlobalData.usr == null){
+            showFormNoLogin("formCreateAccount");
+        }else {
+            JOptionPane.showMessageDialog(this, "Already logged in.");
+        }
+        
+    }//GEN-LAST:event_minCreateAccountActionPerformed
+
+    private void menuLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogoutActionPerformed
+        GlobalData.usr = null;
+        JOptionPane.showMessageDialog(this, "You have been logged out.");
+    }//GEN-LAST:event_menuLogoutActionPerformed
 
     /**
      * @param args the command line arguments
@@ -244,8 +248,6 @@ public class FormMain extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JDesktopPane jdpContainer;
     private javax.swing.JMenuItem menuExit;
     private javax.swing.JMenu menuFile;
@@ -253,6 +255,7 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuLogout;
     private javax.swing.JMenu menuManage;
     private javax.swing.JMenuItem menuView;
+    private javax.swing.JMenuItem minCreateAccount;
     private javax.swing.JMenuItem updateSeller;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,7 +5,7 @@
 package dbcars;
 
 import businessObjects.User;
-import dao.SellerHandler;
+import dao.UserHandler;
 import javax.swing.JOptionPane;
 import utils.GlobalData;
 
@@ -37,6 +37,9 @@ public class FormLogin extends javax.swing.JInternalFrame {
         txtPassword = new javax.swing.JTextField();
         btnLogin = new javax.swing.JButton();
 
+        setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
         setTitle("Login");
 
         jLabel1.setText("Username");
@@ -94,12 +97,13 @@ public class FormLogin extends javax.swing.JInternalFrame {
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         String username = txtUsername.getText();
         String password = txtPassword.getText();
-        User usr = new SellerHandler().login(username, password);
+        User usr = new UserHandler().login(username, password);
         if (usr != null){
             GlobalData.usr = usr;
             this.dispose();
+            JOptionPane.showMessageDialog(this, "Hello " + username + ", you have successfully logged in!");
         }else {
-            JOptionPane.showMessageDialog(this, "Incorrect username and password");
+            JOptionPane.showMessageDialog(this, "Incorrect username and/or password");
         }
     }//GEN-LAST:event_btnLoginActionPerformed
 
