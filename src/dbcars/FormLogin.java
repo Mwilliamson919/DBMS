@@ -101,6 +101,8 @@ public class FormLogin extends javax.swing.JInternalFrame {
         if (usr != null){
             GlobalData.usr = usr;
             this.dispose();
+            FormMain main = new FormMain().getFrmMain();
+            main.refreshMain();
             JOptionPane.showMessageDialog(this, "Hello " + username + ", you have successfully logged in!");
         }else {
             JOptionPane.showMessageDialog(this, "Incorrect username and/or password");

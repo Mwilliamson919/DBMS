@@ -4,10 +4,12 @@
  */
 package dbcars;
 
+import businessObjects.User;
 import businessObjects.Vehicle;
 import dao.MakerHandler;
 import dao.VehicleHandler;
 import java.util.List;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import utils.GlobalData;
@@ -31,8 +33,6 @@ public class FormView extends javax.swing.JInternalFrame {
         }else {
             keyword = txtSearch.getText();
         }
-        System.out.println(keyword);
-        //keyword = "1";
         List<Vehicle> vehicles = vehicleHandler.loadVehicles(keyword);
         String columns[] = new String[]{"autoID", "makerName", "model", "trim", "year", "color", "mpg", "msrp", "capacity", "drivetrain", "type", "Final Price"};
         DefaultTableModel tblModel = new DefaultTableModel(columns, 0);
@@ -46,6 +46,10 @@ public class FormView extends javax.swing.JInternalFrame {
     public FormView() {
         initComponents();
         populateVehicles();
+        if (GlobalData.usr.getUserRole().equals("Buyer")){
+            btnDelete.setVisible(false);
+            btnUpdate.setVisible(false);
+        }
     }
 
     /**
@@ -155,7 +159,7 @@ public class FormView extends javax.swing.JInternalFrame {
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         int selectedRow = tblVehicles.getSelectedRow();
-        if (selectedRow != -1 && GlobalData.usr.getUserRole().equals("Seller")){
+        if (selectedRow != -1 && (GlobalData.usr.getUserRole().equals("Seller") || GlobalData.usr.getUserRole().equals("Admin"))){
             int autoID = (int) tblVehicles.getValueAt(selectedRow, 0);
             int ret = JOptionPane.showConfirmDialog(this, String.format("Delete Vehicle %d.  Are you sure?", autoID));
             if (ret == JOptionPane.OK_OPTION){
@@ -170,7 +174,7 @@ public class FormView extends javax.swing.JInternalFrame {
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         int selectedRow = tblVehicles.getSelectedRow();
-        if (selectedRow != -1 && GlobalData.usr.getUserRole().equals("Seller")){
+        if (selectedRow != -1 && (GlobalData.usr.getUserRole().equals("Seller")) || GlobalData.usr.getUserRole().equals("Admin")){
             int autoID = (int) tblVehicles.getValueAt(selectedRow,0);
             int ret = JOptionPane.showConfirmDialog(this, String.format("Update vehicle %d?", autoID));
             if (ret == JOptionPane.OK_OPTION){
@@ -200,7 +204,13 @@ public class FormView extends javax.swing.JInternalFrame {
         System.out.println("update pressed");
         
     }//GEN-LAST:event_btnUpdateActionPerformed
-
+    public JButton getUpdateButton(){
+        return btnUpdate;
+    }
+    
+    public JButton getDeleteButton(){
+        return btnDelete;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;

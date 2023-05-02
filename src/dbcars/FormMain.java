@@ -4,13 +4,16 @@
  */
 package dbcars;
 
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.beans.PropertyVetoException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import utils.GlobalData;
 
@@ -20,28 +23,54 @@ import utils.GlobalData;
  */
 public class FormMain extends javax.swing.JFrame {
 
-    /**
+/**
      * Creates new form FormMain
      */
+    private static FormMain frmMain;
+
+    public static FormMain getFrmMain() {
+        return frmMain;
+    }
+
+    public static void setFrmMain(FormMain frmMain) {
+        FormMain.frmMain = frmMain;
+    }
+
+    public JMenu getUsersMenu() {
+        return usersMenu;
+    }
+
+    public void setUsersMenu(JMenu usersMenu) {
+        this.usersMenu = usersMenu;
+    }
     FormLogin formLogin = new FormLogin();
     FormListVehicle formListVehicle = new FormListVehicle();
-    FormView formView = new FormView();
+    FormView formView;
     FormCreateAccount formCreateAccount = new FormCreateAccount();
+    FormViewUsers formViewUsers = new FormViewUsers();
     
     Map<String, JInternalFrame> forms = new HashMap<>();
     
     public FormMain() {
         initComponents();
+        usersMenu.setVisible(false);
         forms.put("formLogin", formLogin);
         forms.put("formListVehicle", formListVehicle);
-        forms.put("formView", formView);
         forms.put("formCreateAccount", formCreateAccount);
-        //add to j desktop pane
+        forms.put("formViewUsers", formViewUsers);
+        
         forms.values().forEach((frm)->{
             jdpContainer.add(frm);
         });
         
+        
          
+    }
+    
+    public void refreshMain(){
+        if (GlobalData.usr.getUserRole().equals("Admin")){
+            usersMenu.setVisible(true);
+        }
     }
     private void showFormNoLogin(String formName){
         showForm(formName, false);
@@ -57,14 +86,16 @@ public class FormMain extends javax.swing.JFrame {
             try {
                 //Authorize
                 if(forms.get(formName).isClosed()){
-                    try {
-                        forms.put(formName, forms.get(formName).getClass().newInstance());
-                        jdpContainer.add(forms.get(formName));
-                    } catch (InstantiationException ex) {
-                        Logger.getLogger(FormMain.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IllegalAccessException ex) {
-                        Logger.getLogger(FormMain.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+             
+                        try {
+                            forms.put(formName, forms.get(formName).getClass().newInstance());
+                            jdpContainer.add(forms.get(formName));
+                        } catch (InstantiationException ex) {
+                            Logger.getLogger(FormMain.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (IllegalAccessException ex) {
+                            Logger.getLogger(FormMain.class.getName()).log(Level.SEVERE, null, ex);
+                        } 
+                    
                 }
                 forms.get(formName).setVisible(true);
                 forms.get(formName).setSelected(true);
@@ -94,6 +125,8 @@ public class FormMain extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         updateSeller = new javax.swing.JMenuItem();
         menuView = new javax.swing.JMenuItem();
+        usersMenu = new javax.swing.JMenu();
+        minViewUsers = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -163,6 +196,18 @@ public class FormMain extends javax.swing.JFrame {
 
         menuManage.add(jMenu1);
 
+        usersMenu.setText("Users");
+
+        minViewUsers.setText("View");
+        minViewUsers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minViewUsersActionPerformed(evt);
+            }
+        });
+        usersMenu.add(minViewUsers);
+
+        menuManage.add(usersMenu);
+
         jMenuBar1.add(menuManage);
 
         setJMenuBar(jMenuBar1);
@@ -176,11 +221,12 @@ public class FormMain extends javax.swing.JFrame {
         }else {
             JOptionPane.showMessageDialog(this, "Already logged in.");
         }
+        
     }//GEN-LAST:event_menuLoginActionPerformed
 
     private void updateSellerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateSellerActionPerformed
         if (GlobalData.usr != null){
-            if (GlobalData.usr.getUserRole().equals("Seller")){
+            if (GlobalData.usr.getUserRole().equals("Seller") || GlobalData.usr.getUserRole().equals("Admin")){
             showForm("formListVehicle");
             }else {
             JOptionPane.showMessageDialog(this, "Insufficient permissions");
@@ -191,7 +237,10 @@ public class FormMain extends javax.swing.JFrame {
     }//GEN-LAST:event_updateSellerActionPerformed
 
     private void menuViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuViewActionPerformed
-        showForm("formView");
+        formView = new FormView();
+        forms.put("formView", formView);
+        jdpContainer.add(formView);
+        showForm("formView");     
     }//GEN-LAST:event_menuViewActionPerformed
 
     private void minCreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minCreateAccountActionPerformed
@@ -207,6 +256,10 @@ public class FormMain extends javax.swing.JFrame {
         GlobalData.usr = null;
         JOptionPane.showMessageDialog(this, "You have been logged out.");
     }//GEN-LAST:event_menuLogoutActionPerformed
+
+    private void minViewUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minViewUsersActionPerformed
+        showForm("formViewUsers");
+    }//GEN-LAST:event_minViewUsersActionPerformed
 
     /**
      * @param args the command line arguments
@@ -238,7 +291,7 @@ public class FormMain extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                FormMain frmMain = new FormMain();
+                frmMain = new FormMain();
                 frmMain.setSize(Toolkit.getDefaultToolkit().getScreenSize());
                 frmMain.setVisible(true);
             }
@@ -256,6 +309,8 @@ public class FormMain extends javax.swing.JFrame {
     private javax.swing.JMenu menuManage;
     private javax.swing.JMenuItem menuView;
     private javax.swing.JMenuItem minCreateAccount;
+    private javax.swing.JMenuItem minViewUsers;
     private javax.swing.JMenuItem updateSeller;
+    private javax.swing.JMenu usersMenu;
     // End of variables declaration//GEN-END:variables
 }

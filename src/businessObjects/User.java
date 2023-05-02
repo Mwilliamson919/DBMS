@@ -4,6 +4,10 @@
  */
 package businessObjects;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 /**
  *
  * @author mwill
@@ -11,8 +15,28 @@ package businessObjects;
 public class User {
     private int userID;
     private String userRole;
+    private String userName;
+    
+    public User(int userID, String userRole, String userName) {
+        this.userID = userID;
+        this.userRole = userRole;
+        this.userName = userName;
+    }
+    
+     public Vector getRow(){
+        Vector vector = new Vector();
+        vector.add(this.userID);
+        vector.add(this.userName);
+        vector.add(this.userRole);
+        return vector;
+    }
+    
     public User(int userID, String userRole) {
         this.userID = userID;
+        this.userRole = userRole;
+    }
+
+    public User(String userRole) {
         this.userRole = userRole;
     }
 
@@ -31,4 +55,6 @@ public class User {
     public void setUserID(int userID) {
         this.userID = userID;
     }
+    
+    
 }

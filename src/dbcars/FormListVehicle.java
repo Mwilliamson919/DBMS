@@ -97,6 +97,11 @@ public class FormListVehicle extends javax.swing.JInternalFrame {
         });
 
         cbxMakes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbxMakes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxMakesActionPerformed(evt);
+            }
+        });
 
         jLabel11.setText("Trim");
 
@@ -249,6 +254,10 @@ public class FormListVehicle extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Vehicle Added.");
         }
     }//GEN-LAST:event_btnAddActionPerformed
+
+    private void cbxMakesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxMakesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbxMakesActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
