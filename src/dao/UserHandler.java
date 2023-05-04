@@ -41,7 +41,7 @@ public class UserHandler {
     }
     
     public int updateUser(String role, int userId){
-        String cmd = "update users set userRole = " + role + " where userId = " + userId + ";";
+        String cmd = String.format("update users set userRole = '%s' where userId = '%d';", role, userId);
         return sqlUtil.executeUpdate(cmd);
     }
     

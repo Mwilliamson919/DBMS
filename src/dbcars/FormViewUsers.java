@@ -57,6 +57,10 @@ public class FormViewUsers extends javax.swing.JInternalFrame {
         btnSearch = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
 
+        setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
+
         tblUsers.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
